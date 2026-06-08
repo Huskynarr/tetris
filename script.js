@@ -40,6 +40,7 @@ let nextPieceType = null;
 
 // Start game on load
 startNewGame();
+loadHighscores();
 
 function switchTab(tabId) {
     currentTab = tabId;
@@ -100,7 +101,12 @@ function spawnPiece() {
     if (checkCollision(currentPiece.matrix, currentPiece.row, currentPiece.col)) {
         gameOver = true;
         pauseGame();
-        document.getElementById('game-over-overlay').classList.remove('hidden');
+        if (score > 0) {
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('highscore-modal').classList.remove('hidden');
+        } else {
+            document.getElementById('game-over-overlay').classList.remove('hidden');
+        }
     }
 }
 
@@ -332,4 +338,62 @@ function handleTouchCtrl(action) {
     else if (action === 'rotate') rotatePiece();
     else if (action === 'soft') moveDown();
     else if (action === 'hard') hardDrop();
+}
+
+// Highscore Functions
+function loadHighscores() {
+    let raw = localStorage.getItem('galadriel_tetris_scores');
+    let scoresList = raw ? JSON.parse(raw) : [];
+    
+    scoresList.sort((a, b) => b.score - a.score);
+    
+    const tbody = document.getElementById('leaderboard-body');
+    if (tbody) {
+        tbody.innerHTML = '';
+        
+        const top10 = scoresList.slice(0, 10);
+        if (top10.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--text-secondary)">Noch keine Highscores eingetragen. Spieldurchgang beenden!</td></tr>`;
+            return;
+        }
+        
+        top10.forEach((item, index) => {
+            let tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${index + 1}</td>
+                <td><strong>${item.name}</strong></td>
+                <td>${item.lines}</td>
+                <td style="color:var(--success);font-weight:700">${item.score}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+    }
+}
+
+function submitHighscore() {
+    let name = document.getElementById('player-name').value.trim();
+    if (!name) name = "Anonym";
+    
+    let raw = localStorage.getItem('galadriel_tetris_scores');
+    let scoresList = raw ? JSON.parse(raw) : [];
+    
+    scoresList.push({
+        name: name,
+        lines: lines,
+        score: score,
+        date: new Date().toISOString()
+    });
+    
+    localStorage.setItem('galadriel_tetris_scores', JSON.stringify(scoresList));
+    closeHighscoreModal(false);
+    loadHighscores();
+}
+
+function closeHighscoreModal(isCancel) {
+    document.getElementById('highscore-modal').classList.add('hidden');
+    document.getElementById('player-name').value = '';
+    if (isCancel) {
+        loadHighscores();
+    }
+    startNewGame();
 }

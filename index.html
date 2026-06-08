@@ -67,6 +67,44 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Highscore Dialog Overlay -->
+                <div class="modal-overlay hidden" id="highscore-modal">
+                    <div class="modal-content card">
+                        <h2>🎉 Spiel vorbei!</h2>
+                        <p>Klasse Leistung! Du hast eine neue Punktzahl erreicht.</p>
+                        <div class="score-summary">
+                            <span>Endpunktzahl:</span>
+                            <span id="final-score">0</span>
+                        </div>
+                        <div class="input-group">
+                            <label for="player-name">Dein Name:</label>
+                            <input type="text" id="player-name" placeholder="Name eintragen..." maxlength="15">
+                        </div>
+                        <div class="modal-buttons">
+                            <button class="btn btn-primary" onclick="submitHighscore()">Speichern</button>
+                            <button class="btn btn-stay" onclick="closeHighscoreModal(true)">Anonym / Ohne Speichern</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leaderboard Section -->
+                <div class="leaderboard-section card">
+                    <h3>🏆 Top 10 Highscores</h3>
+                    <table class="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th>Rang</th>
+                                <th>Name</th>
+                                <th>Reihen</th>
+                                <th>Punkte</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-body">
+                            <!-- Dynamic records -->
+                        </tbody>
+                    </table>
+                </div>
             </section>
 
             <!-- TAB 2: MATHEMATICS -->
