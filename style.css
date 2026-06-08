@@ -1,0 +1,355 @@
+/* CSS for Tetris Game and Math */
+:root {
+    --bg-main: #0b0f19;
+    --bg-card: rgba(17, 24, 39, 0.75);
+    --border-color: rgba(99, 102, 241, 0.2);
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --primary: #6366f1;
+    --primary-glow: rgba(99, 102, 241, 0.4);
+    --success: #10b981;
+    --success-glow: rgba(16, 185, 129, 0.3);
+    --danger: #ef4444;
+    --danger-glow: rgba(239, 68, 68, 0.3);
+    
+    /* Tetris neon piece colors */
+    --t-I: #06b6d4; /* Cyan */
+    --t-O: #eab308; /* Yellow */
+    --t-T: #a855f7; /* Purple */
+    --t-S: #22c55e; /* Green */
+    --t-Z: #ef4444; /* Red */
+    --t-J: #3b82f6; /* Blue */
+    --t-L: #f97316; /* Orange */
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 2rem;
+    overflow-x: hidden;
+}
+
+.app-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.app-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.glow-text {
+    font-size: 2.8rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #a5b4fc, #6366f1, #4f46e5);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px var(--primary-glow);
+}
+
+.subtitle {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+}
+
+/* Tabs */
+.tab-navigation {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.tab-button {
+    background: rgba(30, 41, 59, 0.5);
+    border: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 0.8rem 1.5rem;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(10px);
+}
+
+.tab-button:hover {
+    color: var(--text-primary);
+    border-color: rgba(99, 102, 241, 0.5);
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.15);
+    transform: translateY(-2px);
+}
+
+.tab-button.active {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: var(--text-primary);
+    border-color: transparent;
+    box-shadow: 0 0 20px var(--primary-glow);
+}
+
+/* Content Area */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.5s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 2rem;
+    backdrop-filter: blur(15px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+/* Game Layout */
+.game-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.8fr;
+    gap: 3rem;
+    align-items: start;
+    max-width: 850px;
+    margin: 0 auto;
+}
+
+.game-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.score-card {
+    display: flex;
+    justify-content: space-around;
+    padding: 1.2rem;
+    text-align: center;
+}
+
+.score-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.score-item .label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.3rem;
+}
+
+.score-item .value {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: var(--success);
+}
+
+.preview-box {
+    display: grid;
+    grid-template-columns: repeat(4, 20px);
+    grid-template-rows: repeat(4, 20px);
+    gap: 2px;
+    width: 86px;
+    height: 86px;
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid var(--border-color);
+    margin: 1rem auto 0 auto;
+    padding: 2px;
+    border-radius: 8px;
+}
+
+.preview-cell {
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+}
+
+.btn {
+    padding: 0.8rem 1.2rem;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.btn-reset {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+}
+
+.btn-reset:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* Tetris Board Area */
+.tetris-area {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.board-wrapper {
+    position: relative;
+    border: 4px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.tetris-board {
+    display: grid;
+    grid-template-columns: repeat(10, 24px);
+    grid-template-rows: repeat(20, 24px);
+    gap: 1px;
+    width: 251px;
+    height: 501px;
+    background: rgba(15, 23, 42, 0.85);
+}
+
+.tetris-cell {
+    width: 24px;
+    height: 24px;
+    border-radius: 2px;
+    background: rgba(15, 23, 42, 0.2);
+    box-shadow: inset 0 0 4px rgba(255,255,255,0.02);
+}
+
+/* Filled block styling */
+.tetris-cell.filled-I { background-color: var(--t-I); box-shadow: 0 0 8px var(--t-I); }
+.tetris-cell.filled-O { background-color: var(--t-O); box-shadow: 0 0 8px var(--t-O); }
+.tetris-cell.filled-T { background-color: var(--t-T); box-shadow: 0 0 8px var(--t-T); }
+.tetris-cell.filled-S { background-color: var(--t-S); box-shadow: 0 0 8px var(--t-S); }
+.tetris-cell.filled-Z { background-color: var(--t-Z); box-shadow: 0 0 8px var(--t-Z); }
+.tetris-cell.filled-J { background-color: var(--t-J); box-shadow: 0 0 8px var(--t-J); }
+.tetris-cell.filled-L { background-color: var(--t-L); box-shadow: 0 0 8px var(--t-L); }
+
+.game-over-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(15, 23, 42, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    z-index: 100;
+}
+
+.game-over-overlay h2 {
+    color: var(--danger);
+    font-size: 2.2rem;
+    text-shadow: 0 0 15px var(--danger-glow);
+}
+
+/* Touch controls */
+.touch-controls {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.6rem;
+    width: 251px;
+}
+
+.ctrl-btn {
+    background: rgba(30, 41, 59, 0.6);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 0.8rem 0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+}
+
+.ctrl-btn:active {
+    background: var(--primary);
+    border-color: transparent;
+}
+
+.btn-rotate {
+    grid-column: span 1;
+    background: rgba(99, 102, 241, 0.2);
+}
+
+.btn-soft {
+    grid-column: span 1;
+}
+
+.btn-hard {
+    grid-column: span 2;
+    background: rgba(16, 185, 129, 0.2);
+    border-color: rgba(16, 185, 129, 0.4);
+}
+
+.btn-hard:active {
+    background: var(--success);
+}
+
+/* Math Explanation Tab */
+.math-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.math-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 3rem;
+}
+
+.math-explanation {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    line-height: 1.6;
+}
+
+.math-explanation p {
+    color: var(--text-secondary);
+}
+
+.math-explanation ul {
+    margin-left: 1.5rem;
+    color: var(--text-secondary);
+}
+
+.highlight-box {
+    background: rgba(99, 102, 241, 0.1);
+    border-left: 4px solid var(--primary);
+    padding: 1.2rem;
+    border-radius: 0 12px 12px 0;
+    color: var(--text-primary) !important;
+}
+
+.hidden {
+    display: none !important;
+}

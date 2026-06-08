@@ -1,0 +1,16 @@
+#!/bin/bash
+# =============================================================================
+# Start-Skript für Tetris (Galadriel Submodul)
+# =============================================================================
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+PROJECT_ROOT="$( cd "${SCRIPT_DIR}/.." && pwd )"
+LOGFILE="${PROJECT_ROOT}/logs/tetris.log"
+
+export PATH="${PROJECT_ROOT}/bin:${PATH:-}"
+
+if [[ -f "${PROJECT_ROOT}/bin/dune-ash-common.sh" ]]; then
+    source "${PROJECT_ROOT}/bin/dune-ash-common.sh"
+    setup_logging "$LOGFILE" "tetris"
+fi
+
+python3 "${SCRIPT_DIR}/show.py" >> "$LOGFILE" 2>&1
