@@ -397,3 +397,16 @@ function closeHighscoreModal(isCancel) {
     }
     startNewGame();
 }
+
+function pressKey(char) {
+    const input = document.getElementById('player-name');
+    if (!input) return;
+    
+    if (char === 'Backspace') {
+        input.value = input.value.slice(0, -1);
+    } else {
+        if (input.value.length < input.maxLength) {
+            input.value += char;
+        }
+    }
+}
