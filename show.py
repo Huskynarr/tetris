@@ -19,6 +19,7 @@ class GameWindow(Gtk.Window):
         settings.set_enable_javascript(True)
         settings.set_enable_webgl(True)
         settings.set_enable_write_console_messages_to_stdout(True)
+        settings.set_enable_smooth_scrolling(True)
         
         html_file = Path(__file__).resolve().parent / 'index.html'
         self.webview.load_uri(html_file.as_uri())
@@ -29,8 +30,14 @@ class GameWindow(Gtk.Window):
         self.btn_close.set_label('X')
         self.btn_close.connect('clicked', Gtk.main_quit)
 
+        # Wrap webview in a scrolled window to support touch-scrolling
+        scrolled = Gtk.ScrolledWindow()
+        scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        scrolled.set_kinetic_scrolling(True)
+        scrolled.add(self.webview)
+
         overlay = Gtk.Overlay()
-        overlay.add(self.webview)
+        overlay.add(scrolled)
         overlay.add_overlay(self.btn_close)
 
         self.add(overlay)

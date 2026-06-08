@@ -37,6 +37,8 @@ body {
     min-height: 100vh;
     padding: 2rem;
     overflow-x: hidden;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .app-container {
