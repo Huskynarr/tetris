@@ -410,3 +410,67 @@ function pressKey(char) {
         }
     }
 }
+
+// Enable touch/mouse drag scrolling on non-game tabs
+function initDragScroll() {
+    let isDown = false;
+    let startY;
+    let scrollTop;
+    const body = document.documentElement || document.body;
+
+    const shouldScroll = (e) => {
+        const activeTab = document.querySelector('.tab-content.active');
+        if (activeTab && activeTab.id === 'tab-game') {
+            return false;
+        }
+        const tag = e.target.tagName.toLowerCase();
+        if (tag === 'input' || tag === 'button' || tag === 'textarea' || tag === 'select' || e.target.closest('button') || e.target.closest('input')) {
+            return false;
+        }
+        return true;
+    };
+
+    window.addEventListener('mousedown', (e) => {
+        if (!shouldScroll(e)) return;
+        isDown = true;
+        startY = e.pageY - body.offsetTop;
+        scrollTop = window.scrollY || document.documentElement.scrollTop;
+    });
+
+    window.addEventListener('mouseleave', () => {
+        isDown = false;
+    });
+
+    window.addEventListener('mouseup', () => {
+        isDown = false;
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const y = e.pageY - body.offsetTop;
+        const walk = (y - startY) * 1.5;
+        window.scrollTo(0, scrollTop - walk);
+    });
+
+    window.addEventListener('touchstart', (e) => {
+        if (!shouldScroll(e)) return;
+        isDown = true;
+        startY = e.touches[0].pageY - body.offsetTop;
+        scrollTop = window.scrollY || document.documentElement.scrollTop;
+    });
+
+    window.addEventListener('touchend', () => {
+        isDown = false;
+    });
+
+    window.addEventListener('touchmove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const y = e.touches[0].pageY - body.offsetTop;
+        const walk = (y - startY) * 1.5;
+        window.scrollTo(0, scrollTop - walk);
+    }, { passive: false });
+}
+
+initDragScroll();

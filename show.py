@@ -30,14 +30,8 @@ class GameWindow(Gtk.Window):
         self.btn_close.set_label('X')
         self.btn_close.connect('clicked', Gtk.main_quit)
 
-        # Wrap webview in a scrolled window to support touch-scrolling
-        scrolled = Gtk.ScrolledWindow()
-        scrolled.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
-        scrolled.set_kinetic_scrolling(True)
-        scrolled.add(self.webview)
-
         overlay = Gtk.Overlay()
-        overlay.add(scrolled)
+        overlay.add(self.webview)
         overlay.add_overlay(self.btn_close)
 
         self.add(overlay)
