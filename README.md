@@ -2,6 +2,9 @@
 
 Dieses Projekt ist eine interaktive Implementierung des Klassikers **Tetris** für das Galadriel-Ausstellungssystem. Es kombiniert das bekannte Gameplay mit einer Erläuterung der zugrundeliegenden mathematischen und algorithmischen Fragestellungen.
 
+## Screenshot
+![Vorschau](screenshot.png)
+
 ## Projektplan
 
 Das Projekt wird als eigenständige HTML5/JavaScript-Applikation entwickelt, die in einem GTK3/WebKit2-Fenster im Vollbildmodus läuft.
