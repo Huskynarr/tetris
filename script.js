@@ -389,6 +389,16 @@ function submitHighscore() {
     });
     
     localStorage.setItem('galadriel_tetris_scores', JSON.stringify(scoresList));
+
+    // Kioskweite Tages-Bestenliste: Score an den Launcher melden
+    // (nur im Kiosk-WebView vorhanden, sonst stiller No-Op)
+    try {
+        window.webkit?.messageHandlers?.scorebridge?.postMessage(JSON.stringify({
+            name: name,
+            score: score
+        }));
+    } catch (e) { /* außerhalb des Kiosks nicht verfügbar */ }
+
     closeHighscoreModal(false);
     loadHighscores();
 }
