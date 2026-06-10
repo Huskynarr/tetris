@@ -345,10 +345,25 @@ function escapeHtml(str) {
     return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
+let currentScoresList = [];
+
 function loadHighscores() {
-    let raw = localStorage.getItem('galadriel_tetris_scores');
-    let scoresList = raw ? JSON.parse(raw) : [];
+    try {
+        if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.highscore_bridge) {
+            window.webkit.messageHandlers.highscore_bridge.postMessage(JSON.stringify({ action: 'get_highscores' }));
+            return;
+        }
+    } catch (e) {
+        console.warn("highscore_bridge get_highscores error:", e);
+    }
     
+    // Fallback to localStorage
+    let raw = localStorage.getItem('galadriel_tetris_scores');
+    currentScoresList = raw ? JSON.parse(raw) : [];
+    renderHighscoresUI(currentScoresList);
+}
+
+function renderHighscoresUI(scoresList) {
     scoresList.sort((a, b) => b.score - a.score);
     
     const tbody = document.getElementById('leaderboard-body');
@@ -374,10 +389,40 @@ function loadHighscores() {
     }
 }
 
+window.onHighscoresLoaded = function(scoresList) {
+    currentScoresList = scoresList;
+    renderHighscoresUI(scoresList);
+};
+
 function submitHighscore() {
     let name = document.getElementById('player-name').value.trim();
     if (!name) name = "Anonym";
     
+    // Kioskweite Tages-Bestenliste: Score an den Launcher melden
+    try {
+        window.webkit?.messageHandlers?.scorebridge?.postMessage(JSON.stringify({
+            name: name,
+            score: score
+        }));
+    } catch (e) { /* außerhalb des Kiosks nicht verfügbar */ }
+
+    // Save to SQLite via bridge
+    try {
+        if (window.webkit && window.webkit.messageHandlers && window.webkit.messageHandlers.highscore_bridge) {
+            window.webkit.messageHandlers.highscore_bridge.postMessage(JSON.stringify({
+                action: 'save_score',
+                name: name,
+                score: score,
+                lines: lines
+            }));
+            closeHighscoreModal(false);
+            return;
+        }
+    } catch (e) {
+        console.warn("highscore_bridge save_score error:", e);
+    }
+    
+    // Fallback to localStorage
     let raw = localStorage.getItem('galadriel_tetris_scores');
     let scoresList = raw ? JSON.parse(raw) : [];
     
@@ -389,15 +434,6 @@ function submitHighscore() {
     });
     
     localStorage.setItem('galadriel_tetris_scores', JSON.stringify(scoresList));
-
-    // Kioskweite Tages-Bestenliste: Score an den Launcher melden
-    // (nur im Kiosk-WebView vorhanden, sonst stiller No-Op)
-    try {
-        window.webkit?.messageHandlers?.scorebridge?.postMessage(JSON.stringify({
-            name: name,
-            score: score
-        }));
-    } catch (e) { /* außerhalb des Kiosks nicht verfügbar */ }
 
     closeHighscoreModal(false);
     loadHighscores();
