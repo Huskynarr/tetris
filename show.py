@@ -65,12 +65,6 @@ class GameWindow(Gtk.Window):
         html_file = Path(__file__).resolve().parent / 'index.html'
         self.webview.load_uri(html_file.as_uri())
 
-    def _on_score_message(self, _ucm, message):
-        try:
-            record_highscore(message.get_js_value().to_string())
-        except Exception as exc:
-            print(f"scorebridge: {exc}", file=sys.stderr)
-
         self.btn_close = Gtk.Button()
         self.btn_close.set_halign(Gtk.Align.END)
         self.btn_close.set_valign(Gtk.Align.START)
@@ -83,6 +77,13 @@ class GameWindow(Gtk.Window):
 
         self.add(overlay)
         self.connect('destroy', Gtk.main_quit)
+
+    def _on_score_message(self, _ucm, message):
+        try:
+            record_highscore(message.get_js_value().to_string())
+        except Exception as exc:
+            print(f"scorebridge: {exc}", file=sys.stderr)
+
 
 if __name__ == "__main__":
     win = GameWindow()
