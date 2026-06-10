@@ -341,6 +341,10 @@ function handleTouchCtrl(action) {
 }
 
 // Highscore Functions
+function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
 function loadHighscores() {
     let raw = localStorage.getItem('galadriel_tetris_scores');
     let scoresList = raw ? JSON.parse(raw) : [];
@@ -361,7 +365,7 @@ function loadHighscores() {
             let tr = document.createElement('tr');
             tr.innerHTML = `
                 <td>${index + 1}</td>
-                <td><strong>${item.name}</strong></td>
+                <td><strong>${escapeHtml(item.name)}</strong></td>
                 <td>${item.lines}</td>
                 <td style="color:var(--success);font-weight:700">${item.score}</td>
             `;
