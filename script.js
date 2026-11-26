@@ -40,6 +40,9 @@ let nextPieceType = null;
 
 // Start game on load
 startNewGame();
+// vor dem ersten loadHighscores()-Aufruf deklarieren – sonst bricht das Skript im Browser ohne
+// Kiosk-Brücke mit „Cannot access 'currentScoresList' before initialization“ ab
+let currentScoresList = [];
 loadHighscores();
 
 function switchTab(tabId) {
@@ -345,7 +348,6 @@ function escapeHtml(str) {
     return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
-let currentScoresList = [];
 
 function loadHighscores() {
     try {
